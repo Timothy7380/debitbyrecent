@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="img/logo.png">
+<title>Debit Streetwear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+  /* Deliberately single-theme (white studio look, like the reference) */
+  :root{
+    --bg:#ffffff;
+    --ink:#0d0d0e;
+    --ink-2:#3a3a3d;
+    --muted:#8a8a90;
+    --line:#e7e7ea;
+    --tile:#ededee;
+    --soft:#f6f6f7;
+    --pill:#111113;
+    --pill-ink:#ffffff;
+    --scrim:rgba(13,13,14,.38);
+    --display:"Inter Tight","Helvetica Neue",Arial,sans-serif;
+    --body:"Inter","Helvetica Neue",Arial,sans-serif;
+    --gutter:clamp(16px,3vw,32px);
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  html,body{background:var(--bg);color:var(--ink);margin:0}
+  body{font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit}
+  img{max-width:100%}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
+  [id]{scroll-margin-top:24px}
+
+  /* ---------- Announcement ---------- */
+  .announce{
+    text-align:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);padding:10px var(--gutter) 0;
+  }
+  .announce b{color:var(--ink);font-weight:600}
+
+  /* ---------- Header ---------- */
+  .top{
+    position:relative;z-index:5;
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:14px var(--gutter) 18px;
+  }
+  .logo{display:inline-flex;height:40px;align-items:center;justify-self:start}
+  .logo img{height:40px;width:auto;display:block}
+  .menu{justify-self:center;width:40px;height:40px;display:grid;place-items:center}
+  .menu span{display:block;width:18px;height:1.6px;background:var(--ink);border-radius:2px;box-shadow:0 5px 0 var(--ink);transform:translateY(-2.5px)}
+  .bag-btn{
+    justify-self:end;display:inline-flex;align-items:center;gap:8px;
+    background:var(--pill);color:var(--pill-ink);
+    padding:9px 16px;border-radius:999px;font-size:13px;font-weight:500;letter-spacing:-.005em;
+    transition:transform .2s ease;
+  }
+  .bag-btn:hover{transform:translateY(-1px)}
+  .bag-count{
+    min-width:20px;height:20px;padding:0 6px;border-radius:999px;
+    background:var(--pill-ink);color:var(--pill);font-size:11px;font-weight:600;
+    display:inline-grid;place-items:center;font-variant-numeric:tabular-nums;
+  }
+  .bag-btn.bump .bag-count{animation:bump .45s ease}
+  @keyframes bump{40%{transform:scale(1.35)}}
+
+  /* ---------- Menu overlay ---------- */
+  .nav{
+    position:fixed;inset:0;z-index:30;background:var(--bg);
+    display:flex;flex-direction:column;
+    padding:calc(14px + env(safe-area-inset-top,0px)) var(--gutter) calc(24px + env(safe-area-inset-bottom,0px));
+    opacity:0;pointer-events:none;transition:opacity .3s ease;overflow:auto;
+  }
+  .nav.on{opacity:1;pointer-events:auto}
+  .nav-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding-bottom:18px}
+  .nav-head .x{justify-self:center}
+  .nav-body{flex:1;display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:end;max-width:1320px;width:100%;margin:0 auto;padding-top:24px}
+  .nav-main{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  .nav-main a{
+    font-family:var(--display);font-weight:600;letter-spacing:-.035em;line-height:1.02;
+    font-size:clamp(34px,5.6vw,68px);text-decoration:none;display:inline-block;
+    transition:opacity .2s ease,transform .3s ease;
+  }
+  .nav-main:hover a{opacity:.35}
+  .nav-main a:hover,.nav-main a:focus-visible{opacity:1;transform:translateX(6px)}
+  .nav-side{display:flex;flex-direction:column;gap:24px;font-size:14px}
+  .nav-side h4{margin:0 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .nav-side ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .nav-side a{text-decoration:none}
+  .nav-side a:hover{text-decoration:underline;text-underline-offset:3px}
+
+  /* ---------- Hero copy ---------- */
+  .hero{text-align:center;padding:clamp(20px,4.5vw,48px) 16px 0}
+  h1{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(42px,7.4vw,84px);line-height:.98;letter-spacing:-.035em;
+    margin:0 auto;max-width:11ch;text-wrap:balance;
+  }
+  .tag{margin:clamp(16px,2.4vw,24px) 0 0;font-size:clamp(14px,1.4vw,16px);color:var(--ink-2)}
+
+  /* ---------- Curved carousel ---------- */
+  .stage{
+    position:relative;width:100%;
+    height:var(--stage-h,340px);
+    margin-top:clamp(20px,3.5vw,40px);
+    perspective:var(--persp,1100px);
+    perspective-origin:50% 50%;
+    overflow:hidden;
+    cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;
+  }
+  .stage.dragging{cursor:grabbing}
+  .track{position:absolute;inset:0;transform-style:preserve-3d}
+  .card{
+    position:absolute;left:50%;top:50%;
+    width:var(--cw,200px);height:var(--ch,250px);
+    margin-left:calc(var(--cw,200px) / -2);margin-top:calc(var(--ch,250px) / -2);
+    backface-visibility:hidden;will-change:transform;
+    padding:0;background:var(--tile);
+  }
+  .card img{
+    width:100%;height:100%;object-fit:cover;display:block;
+    pointer-events:none;-webkit-user-drag:none;
+    mix-blend-mode:multiply;           /* white studio shots pick up the tile tone */
+  }
+  .card .meta{
+    position:absolute;left:10px;right:10px;bottom:10px;
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    padding:8px 10px;border-radius:8px;
+    background:rgba(255,255,255,.92);color:var(--ink);
+    font-size:12px;font-weight:500;text-align:left;
+    opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease;
+  }
+  .card .meta b{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .card .meta span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .stage:not(.dragging) .card:hover .meta,
+  .card:focus-visible .meta{opacity:1;transform:none}
+
+  /* ---------- Lower hero copy ---------- */
+  .intro{
+    max-width:34em;margin:clamp(20px,3.5vw,40px) auto 0;padding:0 16px;
+    text-align:center;font-size:clamp(14px,1.35vw,16px);color:var(--ink);text-wrap:balance;
+  }
+  .ctas{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;padding:18px 16px 56px}
+  .ulink{font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;white-space:nowrap}
+  .ulink:hover{text-decoration-thickness:2px}
+
+  /* ---------- Marquee ---------- */
+  .marquee{background:var(--pill);color:var(--pill-ink);overflow:hidden;padding:12px 0}
+  .marquee-row{display:flex;width:max-content;animation:marquee 32s linear infinite}
+  .marquee span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:0 28px;white-space:nowrap}
+  .marquee span::after{content:"✦";opacity:.45;margin-left:28px}
+  @keyframes marquee{to{transform:translateX(-50%)}}
+
+  /* ---------- Sections ---------- */
+  .sec{max-width:1320px;margin:0 auto;padding:clamp(56px,8vw,96px) var(--gutter) 0}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+  .eyebrow{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px}
+  h2{
+    font-family:var(--display);font-weight:600;letter-spacing:-.03em;line-height:1;
+    font-size:clamp(32px,4.4vw,52px);margin:0;text-wrap:balance;
+  }
+  .count{font-family:var(--body);font-size:13px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:10px;vertical-align:super}
+
+  .tabs-wrap{overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);margin-bottom:28px}
+  .tabs-wrap::-webkit-scrollbar{display:none}
+  .tabs{display:flex;gap:26px;width:max-content;padding-right:16px}
+  .tabs button{
+    font-size:13px;font-weight:500;color:var(--muted);padding:10px 0 12px;
+    border-bottom:1.5px solid transparent;margin-bottom:-1px;white-space:nowrap;
+  }
+  .tabs button:hover{color:var(--ink)}
+  .tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
+  .tabs sup{font-size:10px;margin-left:3px;font-variant-numeric:tabular-nums}
+
+  /* ---------- Product grid ---------- */
+  .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,1.6vw,20px) clamp(10px,1.4vw,16px)}
+  .pc{display:flex;flex-direction:column;gap:10px;text-align:left}
+  .pc-media{position:relative;display:block;width:100%;aspect-ratio:4/5;background:var(--tile);overflow:hidden}
+  .pc-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;transition:opacity .45s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+  .pc-media .back{opacity:0}
+  .pc:hover .pc-media .back{opacity:1}
+  .pc:hover .pc-media .front.has-back{opacity:0}
+  .pc:hover .pc-media img{transform:scale(1.03)}
+  .badge{position:absolute;top:10px;left:10px;z-index:2;background:var(--pill);color:var(--pill-ink);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px}
+  .qadd{
+    position:absolute;left:10px;right:10px;bottom:10px;z-index:2;
+    background:rgba(255,255,255,.94);color:var(--ink);border-radius:999px;
+    font-size:12px;font-weight:600;padding:10px;text-align:center;
+    opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease;
+  }
+  .pc:hover .qadd,.pc-media:focus-visible .qadd{opacity:1;transform:none}
+  .pc-cat{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .pc-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .pc-name{font-size:14px;font-weight:500;margin:0;line-height:1.3}
+  .pc-price{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .more{display:flex;justify-content:center;margin-top:32px}
+  .ghost{
+    border:1px solid var(--ink);border-radius:999px;padding:11px 22px;font-size:13px;font-weight:600;
+    transition:background .2s ease,color .2s ease;text-decoration:none;display:inline-block
+  }
+  .ghost:hover{background:var(--ink);color:#fff}
+  .empty{
+    border:1px dashed var(--line);padding:48px 20px;text-align:center;color:var(--ink-2);
+    display:flex;flex-direction:column;align-items:center;gap:8px
+  }
+  .empty strong{font-family:var(--display);font-size:22px;letter-spacing:-.02em;color:var(--ink)}
+  .empty p{margin:0 0 8px;max-width:36em}
+
+  /* ---------- Banners ---------- */
+  .dual{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1vw,12px)}
+  .banner{position:relative;display:block;overflow:hidden;background:var(--tile);color:#fff;text-decoration:none;aspect-ratio:4/5}
+  .banner.wide{aspect-ratio:16/7}
+  .banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+  .banner:hover img{transform:scale(1.035)}
+  .banner::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.62),rgba(0,0,0,.08) 55%,transparent)}
+  .banner-copy{position:absolute;left:clamp(18px,3vw,36px);right:clamp(18px,3vw,36px);bottom:clamp(18px,3vw,36px);z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+  .banner-copy .eyebrow{color:rgba(255,255,255,.8);margin:0}
+  .banner-copy h3{font-family:var(--display);font-weight:600;letter-spacing:-.03em;line-height:1;font-size:clamp(28px,3.6vw,48px);margin:0 0 6px}
+  .pill-w{background:#fff;color:var(--ink);border-radius:999px;padding:10px 18px;font-size:13px;font-weight:600}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 20px}
+  .chips button{border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:500}
+  .chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+  /* ---------- Lookbook / Citizen ---------- */
+  .look{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
+  .look button,.cit button{position:relative;display:block;width:100%;overflow:hidden;background:var(--tile)}
+  .look button{aspect-ratio:10/13}
+  .look img,.cit img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+  .look button:hover img,.cit button:hover img{transform:scale(1.05)}
+  .cit{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+  .cit button{aspect-ratio:3/4}
+  .cit figcaption{position:absolute;left:10px;bottom:10px;z-index:2;background:rgba(255,255,255,.92);color:var(--ink);font-size:11px;font-weight:600;padding:4px 8px;border-radius:999px}
+  .lede{max-width:40em;color:var(--ink-2);margin:12px 0 0}
+
+  /* ---------- About ---------- */
+  .about{display:grid;grid-template-columns:1fr 1.2fr;gap:clamp(24px,5vw,72px);align-items:start}
+  .about p{margin:0 0 16px;color:var(--ink-2);max-width:62ch}
+  .about p.first{color:var(--ink);font-size:clamp(17px,1.6vw,20px);line-height:1.45;font-weight:500}
+  .focus{list-style:none;margin:40px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+  .focus li{border-top:1px solid var(--ink);padding-top:14px;font-size:14px;font-weight:500}
+  .quote{
+    margin:clamp(48px,7vw,88px) auto 0;text-align:center;max-width:22ch;
+    font-family:var(--display);font-weight:600;letter-spacing:-.03em;line-height:1.06;
+    font-size:clamp(28px,4vw,48px);text-wrap:balance
+  }
+  .sign{text-align:center;margin-top:18px;font-size:13px;color:var(--muted)}
+  .sign b{color:var(--ink)}
+
+  /* ---------- Features ---------- */
+  .feats{margin-top:clamp(56px,8vw,96px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--soft)}
+  .feats ul{list-style:none;margin:0 auto;max-width:1320px;padding:28px var(--gutter);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+  .feats li{display:flex;gap:12px;align-items:flex-start}
+  .feats svg{flex:none;width:22px;height:22px;margin-top:1px}
+  .feats b{display:block;font-size:13px;font-weight:600}
+  .feats span{font-size:13px;color:var(--muted)}
+
+  /* ---------- Footer ---------- */
+  footer{max-width:1320px;margin:0 auto;padding:56px var(--gutter) calc(32px + env(safe-area-inset-bottom,0px))}
+  .foot{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px}
+  .foot img{height:48px;width:auto;display:block;margin-bottom:14px}
+  .foot p{margin:0;color:var(--ink-2);font-size:14px;max-width:26em}
+  .foot h4{margin:0 0 12px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px}
+  .foot a{text-decoration:none}
+  .foot a:hover{text-decoration:underline;text-underline-offset:3px}
+  .legal{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:40px;padding-top:18px;font-size:12px;color:var(--muted)}
+
+  /* ---------- Chat button ---------- */
+  .chat{
+    position:fixed;right:var(--gutter);bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:15;
+    display:inline-flex;align-items:center;gap:8px;background:var(--pill);color:var(--pill-ink);
+    padding:12px 16px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);transition:transform .2s ease
+  }
+  .chat:hover{transform:translateY(-2px)}
+  .chat svg{width:18px;height:18px}
+
+  /* ---------- Sheets (quick view + bag) ---------- */
+  .scrim{position:fixed;inset:0;background:var(--scrim);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:20}
+  .scrim.on{opacity:1;pointer-events:auto}
+  .sheet{
+    position:fixed;z-index:21;top:0;right:0;bottom:0;width:min(440px,100%);
+    background:var(--bg);display:flex;flex-direction:column;
+    transform:translateX(102%);transition:transform .45s cubic-bezier(.2,.8,.2,1);
+    padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .sheet.on{transform:none}
+  .sheet-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);font-size:13px;font-weight:600}
+  .x{width:32px;height:32px;display:grid;place-items:center;border-radius:50%}
+  .x:hover{background:#f1f1f3}
+  .sheet-body{padding:20px;overflow:auto;display:flex;flex-direction:column;gap:16px;flex:1}
+  .q-media{position:relative;background:var(--tile);aspect-ratio:4/5;overflow:hidden}
+  .q-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply}
+  .thumbs{display:flex;gap:8px}
+  .thumbs button{width:56px;aspect-ratio:4/5;position:relative;background:var(--tile);border:1.5px solid transparent;overflow:hidden}
+  .thumbs button[aria-pressed="true"]{border-color:var(--ink)}
+  .thumbs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply}
+  .q-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .q-name{font-family:var(--display);font-size:24px;font-weight:600;letter-spacing:-.02em;line-height:1.1;margin:0}
+  .q-price{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .q-cat{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .q-desc{margin:0;color:var(--ink-2)}
+  .sizes{display:flex;gap:8px;flex-wrap:wrap}
+  .sizes button{min-width:44px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px}
+  .sizes button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
+  .add{
+    width:100%;padding:14px 18px;border-radius:999px;text-align:center;text-decoration:none;display:block;
+    background:var(--pill);color:var(--pill-ink);font-weight:600;font-size:14px;
+  }
+  .add.done{background:#1f6f43}
+  .add[aria-disabled="true"]{opacity:.4;pointer-events:none}
+  .note{font-size:12px;color:var(--muted);text-align:center;margin:0}
+
+  .bag-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
+  .bag-item{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:start}
+  .bag-item .th{position:relative;aspect-ratio:4/5;background:var(--tile);overflow:hidden}
+  .bag-item .th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply}
+  .bag-item h5{margin:0;font-size:14px;font-weight:500;line-height:1.3}
+  .bag-item small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;margin-top:8px}
+  .qty button{width:28px;height:28px;font-size:15px}
+  .qty span{min-width:20px;text-align:center;font-size:13px;font-variant-numeric:tabular-nums}
+  .bag-item .p{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .bag-item .rm{display:block;margin-top:6px;font-size:12px;color:var(--muted);text-decoration:underline;margin-left:auto}
+  .bag-foot{border-top:1px solid var(--line);padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+  .sum{display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:tabular-nums}
+  .sum.total{font-size:16px;font-weight:600}
+  .ship-bar{height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+  .ship-bar i{display:block;height:100%;background:var(--ink);width:0;transition:width .4s ease}
+
+  /* ---------- Lightbox ---------- */
+  .lb{position:fixed;inset:0;z-index:40;background:rgba(10,10,11,.9);display:grid;place-items:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s ease}
+  .lb.on{opacity:1;pointer-events:auto}
+  .lb img{max-height:86vh;max-width:min(92vw,900px);object-fit:contain}
+  .lb .x{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:16px;color:#fff;background:rgba(255,255,255,.12)}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:1000px){
+    .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .look{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .focus{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .feats ul{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .foot{grid-template-columns:1fr 1fr}
+    .foot > div:first-child{grid-column:1 / -1}
+  }
+  @media (max-width:720px){
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .dual{grid-template-columns:1fr}
+    .banner{aspect-ratio:4/4.4}
+    .banner.wide{aspect-ratio:4/3.6}
+    .cit{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cit button:first-child{grid-column:1 / -1;aspect-ratio:4/3}
+    .about{grid-template-columns:1fr}
+    .nav-body{grid-template-columns:1fr;align-items:start}
+    .qadd{display:none}
+    .pc-row{flex-direction:column;align-items:flex-start;gap:2px}
+    .intro{font-size:14px}
+    .chat span{display:none}
+    .chat{padding:13px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .sheet,.scrim,.card .meta,.nav,.lb{transition:none}
+    .marquee-row{animation:none}
+    .pc-media img,.banner img,.look img,.cit img{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<p class="announce">Free shipping on orders above <b>₦500,000</b> &nbsp;|&nbsp; WhatsApp: <b>+234 903 434 4183</b></p>
+<header class="top">
+  <a class="logo" href="#top" aria-label="Debit home">
+    <img src="img/logo.png" alt="Debit">
+  </a>
+  <button class="menu" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="nav"><span></span></button>
+  <button class="bag-btn" id="bagBtn" aria-label="Open bag">Bag <span class="bag-count" id="bagCount">0</span></button>
+</header>
+
+<!-- Menu -->
+<div class="nav" id="nav" aria-hidden="true" role="dialog" aria-label="Menu">
+  <div class="nav-head">
+    <a class="logo" href="#top" data-close><img src="img/logo.png" alt="Debit"></a>
+    <button class="x" id="closeNav" aria-label="Close menu">&#x2715;</button>
+    <span></span>
+  </div>
+  <div class="nav-body">
+    <ul class="nav-main">
+      <li><a href="#top" data-close>Home</a></li>
+      <li><a href="#new" data-close>New Arrivals</a></li>
+      <li><a href="#men" data-close>Men</a></li>
+      <li><a href="#women" data-close>Women</a></li>
+      <li><a href="#collections" data-close data-chip="all">Collections</a></li>
+      <li><a href="#collections" data-close data-chip="classics">Classics</a></li>
+      <li><a href="#lookbook" data-close>Lookbook</a></li>
+      <li><a href="#about" data-close>About Us</a></li>
+      <li><a href="#citizen" data-close>Debit Citizen</a></li>
+    </ul>
+    <div class="nav-side">
+      <div>
+        <h4>Shop by category</h4>
+        <ul>
+          <li><a href="#men" data-close data-tab="men:jersey">Jerseys</a></li>
+          <li><a href="#men" data-close data-tab="men:jacket">Jackets &amp; hoodies</a></li>
+          <li><a href="#men" data-close data-tab="men:pant">Pants</a></li>
+          <li><a href="#men" data-close data-tab="men:short">Shorts</a></li>
+          <li><a href="#men" data-close data-tab="men:headwear">Caps</a></li>
+          <li><a href="#collections" data-close data-chip="accessories">Accessories</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li>Lagos, Nigeria</li>
+          <li>+234 903 434 4183</li>
+          <li>debitbyrecent@gmail.com</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+  <section class="hero">
+    <h1>The Luxury Destination For Streetwear</h1>
+    <p class="tag">Timeless streetwear with a modern Nigerian identity.</p>
+  </section>
+
+  <div class="stage" id="stage" aria-label="Featured products. Drag to browse, click a product for details.">
+    <div class="track" id="track"></div>
+  </div>
+
+  <p class="intro">Debit is the luxury destination for premium streetwear in Nigeria. For the ones who understand that true style isn&rsquo;t loud, it&rsquo;s intentional.</p>
+  <nav class="ctas">
+    <a class="ulink" href="#men">Explore Products</a>
+    <a class="ulink" href="#new">New Arrivals</a>
+  </nav>
+
+  <div class="marquee" aria-hidden="true"><div class="marquee-row" id="marquee"></div></div>
+
+  <!-- New arrivals -->
+  <section class="sec" id="new">
+    <div class="sec-head">
+      <div><span class="eyebrow">Just landed</span><h2>New Arrivals<span class="count" id="newCount"></span></h2></div>
+      <a class="ulink" href="#men">View all</a>
+    </div>
+    <div class="grid" id="newGrid"></div>
+    <div class="more" id="newMore"></div>
+  </section>
+
+  <!-- Men -->
+  <section class="sec" id="men">
+    <div class="sec-head">
+      <div><span class="eyebrow">Shop</span><h2>Men<span class="count" id="menCount"></span></h2></div>
+    </div>
+    <div class="tabs-wrap"><div class="tabs" role="tablist" id="menTabs" aria-label="Men's categories"></div></div>
+    <div class="grid" id="menGrid"></div>
+    <div class="more" id="menMore"></div>
+  </section>
+
+  <!-- Men's / Women's banners -->
+  <section class="sec" aria-label="Collections by line">
+    <div class="dual">
+      <a class="banner" href="#men">
+        <img src="img/men.jpg" alt="Rail of t-shirts in white, red, yellow and black" loading="lazy">
+        <div class="banner-copy"><span class="eyebrow">New Season</span><h3>Men's Collection</h3><span class="pill-w">Shop now</span></div>
+      </a>
+      <a class="banner" href="#women">
+        <img src="img/women.jpg" alt="Woman in round sunglasses against a yellow wall" loading="lazy">
+        <div class="banner-copy"><span class="eyebrow">New Season</span><h3>Women's Collection</h3><span class="pill-w">Shop now</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Women -->
+  <section class="sec" id="women">
+    <div class="sec-head">
+      <div><span class="eyebrow">Shop</span><h2>Women<span class="count" id="womenCount"></span></h2></div>
+    </div>
+    <div class="tabs-wrap"><div class="tabs" role="tablist" id="womenTabs" aria-label="Women's categories"></div></div>
+    <div class="grid" id="womenGrid"></div>
+    <div class="more" id="womenMore"></div>
+  </section>
+
+  <!-- Collections -->
+  <section class="sec" id="collections">
+    <a class="banner wide" href="#collections" id="dropBanner">
+      <img src="img/drop.jpg" alt="White and black Debit hang tags on red cords" loading="lazy">
+      <div class="banner-copy"><span class="eyebrow">Exclusive Drop</span><h3>Collections</h3><span class="pill-w">Shop now</span></div>
+    </a>
+    <div class="chips" id="chips" role="group" aria-label="Collections"></div>
+    <div class="grid" id="colGrid"></div>
+    <div class="more" id="colMore"></div>
+  </section>
+
+  <!-- Lookbook -->
+  <section class="sec" id="lookbook">
+    <div class="sec-head">
+      <div><span class="eyebrow">Editorial</span><h2>Lookbook</h2></div>
+    </div>
+    <div class="look" id="look"></div>
+  </section>
+
+  <!-- Debit Citizen -->
+  <section class="sec" id="citizen">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">Community</span><h2>Debit Citizen</h2>
+        <p class="lede">Real people. Real style. See how our community wears Debit. Submit your look and be featured.</p>
+      </div>
+      <a class="ghost" href="https://wa.me/2349034344183?text=Hi!%20I%27d%20like%20to%20submit%20my%20Debit%20look%20for%20Debit%20Citizen." target="_blank" rel="noopener">Submit your look</a>
+    </div>
+    <div class="cit" id="cit"></div>
+  </section>
+
+  <!-- About -->
+  <section class="sec" id="about">
+    <div class="about">
+      <div>
+        <span class="eyebrow">The Luxury Destination for Streetwear</span>
+        <h2>About Debit</h2>
+      </div>
+      <div>
+        <p class="first">Debit is the luxury destination for premium streetwear in Nigeria.</p>
+        <p>Born from a vision to redefine street fashion with quality, edge, and exclusivity, Debit delivers elevated essentials and statement pieces designed for those who move differently. From Lagos, we craft clothing that blends bold street culture with refined luxury: clean silhouettes, superior fabrics, and details that stand out without trying too hard.</p>
+        <p>Founded under the creative direction of OGB Recent, Debit represents more than apparel. It's a lifestyle brand for the new generation of Nigerian style: confident, authentic, and unapologetically premium. Every piece is made to be worn with pride, whether you're stepping out in the city or making a statement wherever you go.</p>
+      </div>
+    </div>
+    <span class="eyebrow" style="margin-top:40px">We focus on</span>
+    <ul class="focus" style="margin-top:12px">
+      <li>Premium quality materials and construction</li>
+      <li>Limited, carefully curated collections</li>
+      <li>Timeless streetwear with a modern Nigerian identity</li>
+      <li>An exclusive shopping experience</li>
+    </ul>
+    <p class="quote">Debit is for the ones who understand that true style isn't loud. It's intentional.</p>
+    <p class="sign"><b>Debit.</b> The luxury destination for streetwear.</p>
+  </section>
+
+  <!-- Features -->
+  <section class="feats" aria-label="Why shop with Debit">
+    <ul>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h4l4 4v3h-8"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg><div><b>Free Shipping</b><span>Orders over ₦500,000</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg><div><b>Easy Returns</b><span>30-day return policy</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><div><b>Secure Payment</b><span>Powered by Paystack</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><div><b>Live Support</b><span>WhatsApp: +234 903 434 4183</span></div></li>
+    </ul>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="foot">
+    <div>
+      <img src="img/logo.png" alt="Debit">
+      <p>The luxury destination for streetwear. Timeless streetwear with a modern Nigerian identity.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#new">New Arrivals</a></li>
+        <li><a href="#men">Men</a></li>
+        <li><a href="#women">Women</a></li>
+        <li><a href="#collections" data-chip="all">Collections</a></li>
+        <li><a href="#collections" data-chip="classics">Classics</a></li>
+        <li><a href="#collections" data-chip="accessories">Accessories</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Debit</h4>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#lookbook">Lookbook</a></li>
+        <li><a href="#citizen">Debit Citizen</a></li>
+        <li><a href="https://wa.me/2349034344183?text=Hi!%20I%27d%20like%20to%20track%20my%20Debit%20order." target="_blank" rel="noopener">Track Order</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul>
+        <li>DebitbyRecent, Lagos, Nigeria</li>
+        <li>+234 903 434 4183</li>
+        <li>debitbyrecent@gmail.com</li>
+        <li><a href="https://wa.me/2349034344183" target="_blank" rel="noopener">Chat with us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="legal"><span>© 2026 debit. All rights reserved.</span><span>Prices in Nigerian Naira (NGN)</span></div>
+</footer>
+
+<a class="chat" href="https://wa.me/2349034344183?text=Hi!%20I%27m%20interested%20in%20Debit." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Chat with us</span>
+</a>
+
+<div class="scrim" id="scrim"></div>
+
+<!-- Quick view -->
+<aside class="sheet" id="sheet" aria-hidden="true" aria-label="Product details">
+  <div class="sheet-head"><span>Quick view</span><button class="x" data-closesheet aria-label="Close">&#x2715;</button></div>
+  <div class="sheet-body">
+    <div class="q-media"><img id="qImg" alt=""></div>
+    <div class="thumbs" id="qThumbs"></div>
+    <span class="q-cat" id="qCat"></span>
+    <div class="q-row"><h2 class="q-name" id="qName"></h2><span class="q-price" id="qPrice"></span></div>
+    <p class="q-desc" id="qDesc"></p>
+    <div class="sizes" id="qSizes"></div>
+    <button class="add" id="addBtn">Add to bag</button>
+    <p class="note">Free shipping on orders above ₦500,000 · WhatsApp +234 903 434 4183</p>
+  </div>
+</aside>
+
+<!-- Bag -->
+<aside class="sheet" id="bag" aria-hidden="true" aria-label="Your bag">
+  <div class="sheet-head"><span id="bagTitle">Your bag</span><button class="x" data-closesheet aria-label="Close">&#x2715;</button></div>
+  <div class="sheet-body" id="bagBody"></div>
+  <div class="bag-foot" id="bagFoot"></div>
+</aside>
+
+<!-- Lightbox -->
+<div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="Photo">
+  <button class="x" id="closeLb" aria-label="Close">&#x2715;</button>
+  <img id="lbImg" alt="">
+</div>
+
+<script>
+(() => {
+  const CATALOG = [{"id": "-P2GoQwUYD9fda7y6-f4", "img": "img/d01.jpg", "back": "img/d01b.jpg", "name": "Debit Red Jersey", "cat": "Men - Jerseys", "price": 350000, "desc": "Debit sports wear jersey pink", "sizes": ["S", "M", "L", "XL", "XXL"], "isNew": true, "t": 1790226578968, "stock": 20}, {"id": "-P2Gp_iS5SpU6UHSqrA2", "img": "img/d02.jpg", "back": "img/d02b.jpg", "name": "Debit Jersey Black", "cat": "Men - Jerseys", "price": 350000, "desc": "Debit sport Jersey black", "sizes": ["S", "M", "L", "XL"], "isNew": true, "t": 1790226881174, "stock": 20}, {"id": "-P2GqLnMwoLzvjdTiAy2", "img": "img/d03.jpg", "back": "img/d03b.jpg", "name": "Debit Jersey Strip Black", "cat": "Men - Jerseys", "price": 350000, "desc": "Debit sporting Jersey Stripe black", "sizes": ["S", "M", "L", "XL"], "isNew": true, "t": 1790227082192, "stock": 20}, {"id": "-P2Gs19Q8CLsPiyCS735", "img": "img/d04.jpg", "back": null, "name": "Bank Of Debit White", "cat": "Men - Shirts", "price": 350000, "desc": "", "sizes": ["S", "M", "L", "XL"], "isNew": true, "t": 1790227521940, "stock": 10}, {"id": "-P2Gsx8UbeEVcESbKV6O", "img": "img/d05.jpg", "back": null, "name": "Debit Black Hoodie", "cat": "Men - Jackets", "price": 450000, "desc": "Debit Hoodie in black", "sizes": ["S", "M", "L", "XL"], "isNew": true, "t": 1790228200228, "stock": 20}, {"id": "-P2Gtcreg0d6ttQ9JFMx", "img": "img/d06.jpg", "back": null, "name": "Debit Blue Hoodie", "cat": "Men - Jackets", "price": 450000, "desc": "", "sizes": ["S", "M", "L", "XL", "XXL"], "isNew": true, "t": 1790227976750, "stock": 10}, {"id": "-P2Gvw9jLii-dzonqT2g", "img": "img/d07.jpg", "back": null, "name": "Debit Red Hoodie", "cat": "Men - Jackets", "price": 450000, "desc": "", "sizes": ["S", "M", "L", "XL", "XXL"], "isNew": true, "t": 1790228761962, "stock": 20}, {"id": "-P2Gy-enFOR-nP4dz7E4", "img": "img/d08.jpg", "back": "img/d08b.jpg", "name": "Debit Camou Short", "cat": "Men - Shorts", "price": 450000, "desc": "", "sizes": ["S", "M", "L", "XL"], "isNew": true, "t": 1790444070197, "stock": 20}, {"id": "-P2GyrQI_QDevaMWquEo", "img": "img/d09.jpg", "back": "img/d09b.jpg", "name": "Debit Orange Jean Palazoo", "cat": "Men - Pants", "price": 400000, "desc": "", "sizes": ["S", "M", "L", "XL"], "isNew": true, "t": 1790229312957, "stock": 20}, {"id": "-P2GzhAj007etZG83Et1", "img": "img/d10.jpg", "back": null, "name": "Debit Blue Stone Jean", "cat": "Men - Pants", "price": 450000, "desc": "Debit blue jean Palazoo", "sizes": ["S", "M", "L", "XL"], "isNew": true, "t": 1790278218809, "stock": 20}, {"id": "-P2H2ULmYmnaQDqUdoJZ", "img": "img/d11.jpg", "back": null, "name": "Debit Legacy Chain", "cat": "Accessories", "price": 600000, "desc": "", "sizes": ["One size"], "isNew": true, "t": 1790230525084, "stock": 20}, {"id": "-P2HFhz6Emu-4Xi9nDMR", "img": "img/d12.jpg", "back": "img/d12b.jpg", "name": "Debit Blue Track Pant", "cat": "Men - Pants", "price": 550000, "desc": "", "sizes": ["S", "M", "L", "XL"], "isNew": false, "t": 1790441847477, "stock": 20}, {"id": "-P2HIeGp72fMidgcZtsG", "img": "img/d13.jpg", "back": null, "name": "Debit Wool Socks Green", "cat": "Men - Socks", "price": 200000, "desc": "", "sizes": ["S", "M"], "isNew": false, "t": 1790441518364, "stock": 20}, {"id": "-P2THuX9TAhp2-WSkEN_", "img": "img/d14.jpg", "back": null, "name": "Debit Wool Socks Black", "cat": "Men - Socks", "price": 20000, "desc": "", "sizes": ["S", "M"], "isNew": false, "t": 1790441492777, "stock": 20}, {"id": "-P2TIJ3OKVxaoqHHGFcl", "img": "img/d15.jpg", "back": null, "name": "Debit Wool Socks White", "cat": "Men - Socks", "price": 200000, "desc": "", "sizes": ["S", "M"], "isNew": false, "t": 1790441476924, "stock": 20}, {"id": "-P2TK22zkVZPyGvhQrA8", "img": "img/d16.jpg", "back": "img/d16b.jpg", "name": "Debit Track Jacket Blue", "cat": "Men - Jackets", "price": 550000, "desc": "Debit Track Blue", "sizes": ["S", "M", "L", "XL", "XXL"], "isNew": true, "t": 1790441537247, "stock": 20}, {"id": "-P2TKNWiP36xUOyTP4Ru", "img": "img/d17.jpg", "back": "img/d17b.jpg", "name": "Debit Track Jacket Black", "cat": "Men - Jackets", "price": 550000, "desc": "", "sizes": ["S", "M", "L", "XL", "XXL"], "isNew": true, "t": 1790436643974, "stock": 20}, {"id": "-P2TMtPGyZsleFSaVnQE", "img": "img/d18.jpg", "back": null, "name": "Debit Neon Graffiti Cap", "cat": "Men - Caps", "price": 350000, "desc": "", "sizes": ["S", "M", "L"], "isNew": true, "t": 1790437201525, "stock": 20}, {"id": "-P2TOjmznptx_vIZo4Ug", "img": "img/d19.jpg", "back": "img/d19b.jpg", "name": "Debit Track Pants Black", "cat": "Men - Pants", "price": 550000, "desc": "", "sizes": ["S", "M", "L", "XL", "XXL"], "isNew": false, "t": 1790437972611, "stock": 20}, {"id": "-P2TaiD10lXhbsvxe8r-", "img": "img/d20.jpg", "back": null, "name": "Debit Summer Shorts Black", "cat": "Men - Shorts", "price": 200000, "desc": "Debit summer Shorts", "sizes": ["XS", "S", "M", "L", "XL"], "isNew": false, "t": 1790443819425, "stock": 20}, {"id": "-P2TbEEbJ_1T9l2tTKxE", "img": "img/d21.jpg", "back": null, "name": "Debit Summer Shorts Blue", "cat": "Men - Shorts", "price": 250000, "desc": "", "sizes": ["XS", "S", "M", "L", "XL"], "isNew": false, "t": 1790443329736, "stock": 20}, {"id": "-P2TbWxGF8ZQca1o2g0S", "img": "img/d22.jpg", "back": null, "name": "Debit Summer Shorts Red", "cat": "Men - Shorts", "price": 250000, "desc": "", "sizes": ["XS", "S", "M", "L", "XL"], "isNew": false, "t": 1790442310970, "stock": 20}, {"id": "-P2Tc2F9gMS99ecW3jR_", "img": "img/d23.jpg", "back": null, "name": "Debit Baseball Cap", "cat": "Men - Caps", "price": 150000, "desc": "Debit Baseball cap green", "sizes": ["S", "M", "L", "XL"], "isNew": false, "t": 1790441452316, "stock": 20}, {"id": "-P2Td1mx9lPlUnkay3bu", "img": "img/d24.jpg", "back": null, "name": "Debit Baseball Cap", "cat": "Men - Caps", "price": 150000, "desc": "Debit baseball cap Red", "sizes": ["S", "M", "L", "XL"], "isNew": false, "t": 1790441737636, "stock": 20}];
+  const HERO_ORDER = [0, 4, 16, 7, 8, 1, 5, 17, 19, 10, 2, 6, 22, 15, 3, 20, 11, 18, 9, 23, 12, 21, 13, 14];
+  const WA = "2349034344183";
+  const FREE_SHIP = 500000;
+  const fmt = n => "₦" + Number(n).toLocaleString("en-NG");
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const label = p => p.cat.replace(" - ", " · ");
+
+  // ---------- Category matching (mirrors the live store's tabs) ----------
+  const MATCH = {
+    "t-shirt": /t-?shirt|\btee\b/,
+    shirt: /shirt/,
+    pant: /pant|jean|trouser|palazoo/,
+    short: /short/,
+    jacket: /jacket|hoodie/,
+    jersey: /jersey/,
+    belt: /belt/,
+    glass: /glass|shade|eyewear/,
+    headwear: /\bcaps?\b|hat|beanie|headwear/,
+    sock: /sock/,
+    top: /top|shirt|tee/,
+    dress: /dress/,
+    bottom: /bottom|skirt|pant|short|jean/,
+    swimwear: /swim/,
+  };
+  const text = p => (p.cat + " " + p.name).toLowerCase();
+  const inTab = (p, key) => key === "all" || (MATCH[key] ? MATCH[key].test(text(p)) : false);
+  const isMen = p => /men/i.test(p.cat) && !/women/i.test(p.cat);
+  const isWomen = p => /women/i.test(p.cat);
+
+  const byNewest = (a, b) => b.t - a.t;
+  const ALL = CATALOG.slice().sort(byNewest);
+  const NEW = ALL.filter(p => p.isNew);
+  const MEN = ALL.filter(isMen);
+  const WOMEN = ALL.filter(isWomen);
+
+  // ---------- Product card ----------
+  function cardHTML(p) {
+    const i = CATALOG.indexOf(p);
+    return `<article class="pc">
+      <button class="pc-media" type="button" data-open="${i}" aria-label="${esc(p.name)}, ${fmt(p.price)}. Quick view">
+        ${p.isNew ? '<span class="badge">New</span>' : ""}
+        <img class="front${p.back ? " has-back" : ""}" src="${p.img}" alt="" loading="lazy">
+        ${p.back ? `<img class="back" src="${p.back}" alt="" loading="lazy">` : ""}
+        <span class="qadd">Quick add</span>
+      </button>
+      <span class="pc-cat">${esc(label(p))}</span>
+      <div class="pc-row"><h3 class="pc-name">${esc(p.name)}</h3><span class="pc-price">${fmt(p.price)}</span></div>
+    </article>`;
+  }
+
+  function mountGrid(gridId, moreId, list, limit, emptyMsg) {
+    const grid = $(gridId), more = $(moreId);
+    let open = false;
+    function draw() {
+      if (!list.length) { grid.style.display = "block"; grid.innerHTML = emptyMsg; if (more) more.innerHTML = ""; return; }
+      grid.style.display = "";
+      const shown = open ? list : list.slice(0, limit);
+      grid.innerHTML = shown.map(cardHTML).join("");
+      if (more) more.innerHTML = list.length > limit
+        ? `<button class="ghost" type="button">${open ? "Show less" : `See more (${list.length - limit})`}</button>` : "";
+      if (more && more.firstChild) more.firstChild.onclick = () => { open = !open; draw(); };
+    }
+    return { set(l) { list = l; open = false; draw(); } };
+  }
+
+  const EMPTY = (title, msg, link) => `<div class="empty"><strong>${title}</strong><p>${msg}</p>${link || ""}</div>`;
+
+  function mountTabs(tabsId, base, tabs, grid, emptyFor) {
+    const el = $(tabsId);
+    el.innerHTML = tabs.map(t => {
+      const n = base.filter(p => inTab(p, t.key)).length;
+      return `<button role="tab" type="button" data-k="${t.key}" aria-selected="${t.key === "all"}">${t.label}<sup>${n}</sup></button>`;
+    }).join("");
+    const select = key => {
+      [...el.children].forEach(b => b.setAttribute("aria-selected", String(b.dataset.k === key)));
+      grid.set(base.filter(p => inTab(p, key)));
+    };
+    el.onclick = e => { const b = e.target.closest("button"); if (b) select(b.dataset.k); };
+    select("all");
+    return select;
+  }
+
+  // New arrivals
+  $("newCount").textContent = NEW.length;
+  mountGrid("newGrid", "newMore", NEW, 8, "").set(NEW);
+
+  // Men
+  $("menCount").textContent = MEN.length;
+  const MEN_TABS = [["all","All"],["t-shirt","T-Shirts"],["shirt","Shirts"],["pant","Pants"],["short","Shorts"],["jacket","Jackets"],["jersey","Jerseys"],["belt","Belts"],["glass","Glasses"],["headwear","Headwear's"],["sock","Socks"]].map(([key,label]) => ({key,label}));
+  const menGrid = mountGrid("menGrid", "menMore", MEN, 8,
+    EMPTY("Coming Soon!", "Nothing in this category yet. Check back soon."));
+  const selectMen = mountTabs("menTabs", MEN, MEN_TABS, menGrid);
+
+  // Women
+  $("womenCount").textContent = WOMEN.length;
+  const WOMEN_TABS = [["all","All"],["top","Tops"],["dress","Dresses"],["bottom","Bottoms"],["jacket","Jackets"],["swimwear","Swimwear"],["jersey","Jerseys"],["belt","Belts"],["glass","Glasses"],["headwear","Headwear's"],["sock","Socks"]].map(([key,label]) => ({key,label}));
+  const womenGrid = mountGrid("womenGrid", "womenMore", WOMEN, 8,
+    EMPTY("Coming Soon!", "The women's line is on its way. Check back soon, or shop the men's collection in the meantime.", '<a class="ghost" href="#men">Shop Men</a>'));
+  mountTabs("womenTabs", WOMEN, WOMEN_TABS, womenGrid);
+
+  // Collections
+  const COLS = [
+    { key: "all", label: "All pieces", list: ALL },
+    { key: "classics", label: "Classics", list: ALL.filter(p => /classic/i.test(p.cat)) },
+    { key: "summer", label: "Summer Capsule", list: ALL.filter(p => /summer/i.test(p.cat + " " + p.name)) },
+    { key: "accessories", label: "Accessories", list: ALL.filter(p => /accessor/i.test(p.cat)) },
+  ];
+  const colGrid = mountGrid("colGrid", "colMore", ALL, 8,
+    EMPTY("Coming Soon!", "This collection hasn't dropped yet. Check back soon."));
+  const chips = $("chips");
+  chips.innerHTML = COLS.map(c => `<button type="button" data-c="${c.key}" aria-pressed="${c.key === "all"}">${c.label} <span style="opacity:.55">${c.list.length}</span></button>`).join("");
+  const selectChip = key => {
+    const c = COLS.find(x => x.key === key) || COLS[0];
+    [...chips.children].forEach(b => b.setAttribute("aria-pressed", String(b.dataset.c === c.key)));
+    colGrid.set(c.list);
+  };
+  chips.onclick = e => { const b = e.target.closest("button"); if (b) selectChip(b.dataset.c); };
+  selectChip("all");
+
+  // Deep links from menu / footer into tabs and chips
+  document.addEventListener("click", e => {
+    const a = e.target.closest("a[data-chip],a[data-tab]");
+    if (!a) return;
+    if (a.dataset.chip) selectChip(a.dataset.chip);
+    if (a.dataset.tab) { const [, k] = a.dataset.tab.split(":"); selectMen(k); }
+  });
+
+  // Lookbook + citizen
+  const LOOK = [1,2,3,4,5,6].map(n => `img/look${n}.jpg`);
+  $("look").innerHTML = LOOK.map((src, n) => `<button type="button" data-lb="${src}" aria-label="Open look ${n + 1}"><img src="${src}" alt="Debit look ${n + 1}" loading="lazy"></button>`).join("");
+  const CIT = [
+    { src: "img/cit1.jpg", name: "" },
+    { src: "img/cit2.jpg", name: "OGB" },
+    { src: "img/cit3.jpg", name: "" },
+    { src: "img/cit4.jpg", name: "" },
+    { src: "img/cit5.jpg", name: "" },
+  ];
+  $("cit").innerHTML = CIT.map((c, n) => `<button type="button" data-lb="${c.src}" aria-label="Open community photo ${n + 1}"><img src="${c.src}" alt="Debit Citizen wearing Debit${c.name ? ", " + c.name : ""}" loading="lazy">${c.name ? `<figcaption>${c.name}</figcaption>` : ""}</button>`).join("");
+
+  // Marquee
+  const MQ = ["New Arrivals","Premium Quality","Free Shipping Over ₦500,000","Men","Women","Collections","Luxury Streetwear"];
+  $("marquee").innerHTML = [...MQ, ...MQ, ...MQ, ...MQ].map(t => `<span>${t}</span>`).join("");
+
+  // ---------- Hero carousel ----------
+  const stage = $("stage"), track = $("track");
+  const HERO = HERO_ORDER.map(i => CATALOG[i]);
+  const COPIES = HERO.length >= 14 ? 1 : 2;
+  const cards = [];
+  for (let c = 0; c < COPIES; c++) {
+    HERO.forEach(p => {
+      const b = document.createElement("button");
+      b.className = "card"; b.type = "button";
+      b.dataset.i = CATALOG.indexOf(p);
+      b.tabIndex = c === 0 ? 0 : -1;
+      if (c) b.setAttribute("aria-hidden", "true");
+      b.innerHTML = `<img src="${p.img}" alt="${esc(p.name)}" draggable="false"><span class="meta"><span>${esc(p.name)}</span><b>${fmt(p.price)}</b></span>`;
+      track.appendChild(b); cards.push(b);
+    });
+  }
+  let W, cw, ch, gap, step, total, R, P;
+  function layout() {
+    W = stage.clientWidth;
+    const mobile = W < 640;
+    cw = mobile ? Math.min(W * 0.4, 220) : Math.min(Math.max(W * 0.155, 150), 260);
+    ch = cw * 1.22; gap = cw * 0.055; step = cw + gap; total = step * cards.length;
+    R = Math.max(W * (mobile ? 0.8 : 0.6), 360);
+    P = Math.max(W * (mobile ? 1.05 : 0.9), 480);
+    stage.style.setProperty("--cw", cw + "px");
+    stage.style.setProperty("--ch", ch + "px");
+    stage.style.setProperty("--stage-h", (ch * 1.5) + "px");
+    stage.style.setProperty("--persp", P + "px");
+  }
+  layout(); addEventListener("resize", layout);
+
+  let offset = 0, vel = 0, dragging = false, lastX = 0, lastT = 0, moved = 0, downCard = null, hoverPause = false, visible = true;
+  const AUTO = reduce ? 0 : -0.45;
+  function render() {
+    const half = total / 2;
+    for (let k = 0; k < cards.length; k++) {
+      let x = ((k * step + offset) % total + total) % total - half;
+      const th = x / R, el = cards[k];
+      if (Math.abs(th) > 1.25) { el.style.visibility = "hidden"; continue; }
+      el.style.visibility = "visible";
+      el.style.transform = `translate3d(${R * Math.sin(th)}px,0,${R * (1 - Math.cos(th))}px) rotateY(${-th}rad)`;
+      el.style.zIndex = String(1000 - Math.round(Math.abs(x)));
+    }
+  }
+  function tick() {
+    if (visible) {
+      if (!dragging) { vel *= 0.94; offset += vel + (hoverPause ? AUTO * 0.25 : AUTO); }
+      render();
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(stage);
+
+  stage.addEventListener("pointerdown", e => {
+    dragging = true; moved = 0; vel = 0; lastX = e.clientX; lastT = performance.now();
+    downCard = e.target.closest(".card"); stage.setPointerCapture(e.pointerId); stage.classList.add("dragging");
+  });
+  stage.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX, now = performance.now();
+    offset += dx; moved += Math.abs(dx); vel = dx / Math.max(now - lastT, 1) * 16; lastX = e.clientX; lastT = now;
+  });
+  const end = () => {
+    if (!dragging) return;
+    dragging = false; stage.classList.remove("dragging");
+    if (performance.now() - lastT > 80) vel = 0;
+    if (moved < 6 && downCard) openProduct(+downCard.dataset.i);
+    downCard = null;
+  };
+  stage.addEventListener("pointerup", end);
+  stage.addEventListener("pointercancel", end);
+  stage.addEventListener("mouseenter", () => hoverPause = true);
+  stage.addEventListener("mouseleave", () => hoverPause = false);
+  track.addEventListener("keydown", e => {
+    const c = e.target.closest(".card");
+    if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openProduct(+c.dataset.i); }
+    if (e.key === "ArrowLeft") vel += 6;
+    if (e.key === "ArrowRight") vel -= 6;
+  });
+  stage.addEventListener("wheel", e => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); offset -= e.deltaX; }
+  }, { passive: false });
+
+  // ---------- Overlays ----------
+  const scrim = $("scrim"), sheet = $("sheet"), bagSheet = $("bag"), nav = $("nav"), lb = $("lb");
+  let lastFocus = null;
+  function openSheet(el) {
+    lastFocus = document.activeElement;
+    [sheet, bagSheet].forEach(s => { if (s !== el) { s.classList.remove("on"); s.setAttribute("aria-hidden", "true"); } });
+    el.classList.add("on"); el.setAttribute("aria-hidden", "false"); scrim.classList.add("on");
+    el.querySelector("[data-closesheet]").focus();
+  }
+  function closeSheets() {
+    [sheet, bagSheet].forEach(s => { s.classList.remove("on"); s.setAttribute("aria-hidden", "true"); });
+    scrim.classList.remove("on");
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  document.querySelectorAll("[data-closesheet]").forEach(b => b.onclick = closeSheets);
+  scrim.onclick = closeSheets;
+
+  function setNav(on) {
+    nav.classList.toggle("on", on); nav.setAttribute("aria-hidden", String(!on));
+    $("menuBtn").setAttribute("aria-expanded", String(on));
+    document.body.style.overflow = on ? "hidden" : "";
+    if (on) $("closeNav").focus();
+  }
+  $("menuBtn").onclick = () => setNav(true);
+  $("closeNav").onclick = () => setNav(false);
+  nav.addEventListener("click", e => { if (e.target.closest("[data-close]")) setNav(false); });
+
+  document.addEventListener("click", e => {
+    const t = e.target.closest("[data-lb]");
+    if (t) { $("lbImg").src = t.dataset.lb; lb.classList.add("on"); lb.setAttribute("aria-hidden", "false"); $("closeLb").focus(); }
+    const o = e.target.closest("[data-open]");
+    if (o) openProduct(+o.dataset.open);
+  });
+  const closeLb = () => { lb.classList.remove("on"); lb.setAttribute("aria-hidden", "true"); };
+  $("closeLb").onclick = closeLb;
+  lb.addEventListener("click", e => { if (e.target === lb) closeLb(); });
+  addEventListener("keydown", e => { if (e.key === "Escape") { closeSheets(); setNav(false); closeLb(); } });
+
+  // ---------- Quick view ----------
+  let current = null, size = null;
+  function showImg(src) {
+    $("qImg").src = src;
+    [...$("qThumbs").children].forEach(b => b.setAttribute("aria-pressed", String(b.dataset.src === src)));
+  }
+  function openProduct(i) {
+    const p = CATALOG[i]; if (!p) return;
+    current = p; size = p.sizes.length === 1 ? p.sizes[0] : null;
+    $("qImg").alt = p.name;
+    const imgs = [p.img, p.back].filter(Boolean);
+    $("qThumbs").innerHTML = imgs.length > 1 ? imgs.map((s, n) => `<button type="button" data-src="${s}" aria-label="${n ? "Back" : "Front"} view"><img src="${s}" alt=""></button>`).join("") : "";
+    $("qThumbs").onclick = e => { const b = e.target.closest("button"); if (b) showImg(b.dataset.src); };
+    showImg(p.img);
+    $("qCat").textContent = label(p) + (p.isNew ? " · New" : "");
+    $("qName").textContent = p.name;
+    $("qPrice").textContent = fmt(p.price);
+    $("qDesc").textContent = p.desc;
+    $("qDesc").hidden = !p.desc;
+    const s = $("qSizes"); s.innerHTML = "";
+    p.sizes.forEach(v => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = v; b.setAttribute("aria-pressed", String(v === size));
+      b.onclick = () => { size = v; [...s.children].forEach(x => x.setAttribute("aria-pressed", String(x === b))); resetAdd(); };
+      s.appendChild(b);
+    });
+    resetAdd();
+    openSheet(sheet);
+  }
+  function resetAdd() {
+    const a = $("addBtn"); a.classList.remove("done");
+    a.textContent = size ? `Add to bag · ${fmt(current.price)}` : "Choose a size";
+  }
+
+  // ---------- Bag ----------
+  let bag = [];
+  try { bag = JSON.parse(localStorage.getItem("debit-bag") || "[]").filter(x => CATALOG.some(p => p.id === x.id)); } catch (e) { bag = []; }
+  const save = () => { try { localStorage.setItem("debit-bag", JSON.stringify(bag)); } catch (e) {} };
+  const product = id => CATALOG.find(p => p.id === id);
+
+  $("addBtn").onclick = () => {
+    if (!size) { $("addBtn").textContent = "Choose a size first"; return; }
+    const hit = bag.find(x => x.id === current.id && x.size === size);
+    hit ? hit.qty++ : bag.push({ id: current.id, size, qty: 1 });
+    save(); drawBag();
+    const btn = $("bagBtn"); btn.classList.remove("bump"); void btn.offsetWidth; btn.classList.add("bump");
+    const a = $("addBtn"); a.classList.add("done"); a.textContent = "Added to bag";
+    setTimeout(() => { if (sheet.classList.contains("on")) closeSheets(); }, 700);
+  };
+
+  function drawBag() {
+    const n = bag.reduce((s, x) => s + x.qty, 0);
+    const sub = bag.reduce((s, x) => s + product(x.id).price * x.qty, 0);
+    $("bagCount").textContent = n;
+    $("bagTitle").textContent = n ? `Your bag (${n})` : "Your bag";
+    if (!bag.length) {
+      $("bagBody").innerHTML = EMPTY("Your bag is empty", "Save items you love while you browse.", '<a class="ghost" href="#new" data-closesheet-link>Continue Shopping</a>');
+      $("bagFoot").innerHTML = "";
+      return;
+    }
+    $("bagBody").innerHTML = `<ul class="bag-list">${bag.map((x, k) => {
+      const p = product(x.id);
+      return `<li class="bag-item">
+        <div class="th"><img src="${p.img}" alt=""></div>
+        <div><h5>${esc(p.name)}</h5><small>Size ${esc(x.size)} · ${fmt(p.price)}</small>
+          <div class="qty"><button type="button" data-q="${k}:-1" aria-label="Decrease quantity">−</button><span>${x.qty}</span><button type="button" data-q="${k}:1" aria-label="Increase quantity">+</button></div></div>
+        <div><span class="p">${fmt(p.price * x.qty)}</span><button type="button" class="rm" data-rm="${k}">Remove</button></div>
+      </li>`;
+    }).join("")}</ul>`;
+    const left = Math.max(FREE_SHIP - sub, 0);
+    const lines = bag.map((x, k) => { const p = product(x.id); return `${k + 1}. ${p.name} (Size ${x.size})\n   Qty: ${x.qty}  |  ${fmt(p.price * x.qty)}`; }).join("\n");
+    const msg = `🛍️ *NEW ORDER — DEBIT*\n\n${lines}\n\n*Subtotal:* ${fmt(sub)}\n*Shipping:* ${left ? "To be confirmed" : "Free"}\n\nPlease confirm availability and payment details.`;
+    $("bagFoot").innerHTML = `
+      <p class="note" style="text-align:left">${left ? `Add ${fmt(left)} more for free shipping` : "You've unlocked free shipping"}</p>
+      <div class="ship-bar"><i style="width:${Math.min(sub / FREE_SHIP * 100, 100)}%"></i></div>
+      <div class="sum"><span>Subtotal</span><span>${fmt(sub)}</span></div>
+      <div class="sum"><span>Shipping</span><span>${left ? "Calculated at checkout" : "Free"}</span></div>
+      <div class="sum total"><span>Total</span><span>${fmt(sub)}</span></div>
+      <a class="add" href="https://wa.me/${WA}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Checkout on WhatsApp</a>
+      <p class="note">Secure payment powered by Paystack · Prices in NGN</p>`;
+  }
+  $("bagBody").addEventListener("click", e => {
+    const q = e.target.closest("[data-q]"), r = e.target.closest("[data-rm]");
+    if (q) { const [k, d] = q.dataset.q.split(":").map(Number); bag[k].qty += d; if (bag[k].qty < 1) bag.splice(k, 1); }
+    else if (r) bag.splice(+r.dataset.rm, 1);
+    else if (e.target.closest("[data-closesheet-link]")) closeSheets();
+    else return;
+    save(); drawBag();
+  });
+  $("bagBtn").onclick = () => { drawBag(); openSheet(bagSheet); };
+  drawBag();
+})();
+</script>
+
+</body>
+</html>
