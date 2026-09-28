@@ -94,8 +94,46 @@
   .nav-side a{text-decoration:none}
   .nav-side a:hover{text-decoration:underline;text-underline-offset:3px}
 
+  /* ---------- Video hero ---------- */
+  .vhero{position:relative;height:100svh;min-height:560px;max-height:1100px;overflow:hidden;background:#111;color:#fff}
+  .vhero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .vhero::after{
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+    background:linear-gradient(to bottom,rgba(0,0,0,.42),rgba(0,0,0,0) 24%),
+               linear-gradient(to right,rgba(0,0,0,.38),rgba(0,0,0,0) 58%),
+               linear-gradient(to top,rgba(0,0,0,.25),rgba(0,0,0,0) 30%);
+  }
+  .top.on-video{position:absolute;top:0;left:0;right:0;z-index:3;color:#fff}
+  .top .logo{justify-self:center}
+  .on-video .menu span{background:#fff;box-shadow:0 5px 0 #fff}
+  .on-video .bag-btn{background:#fff;color:var(--ink)}
+  .on-video .bag-count{background:var(--ink);color:#fff}
+  .on-video :focus-visible{outline-color:#fff}
+  .top-left{display:flex;align-items:center;gap:18px;justify-self:start}
+  .top-left .menu{margin-left:-10px}
+  .top-links{display:flex;gap:24px}
+  .top-links a{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;text-decoration:none;color:inherit;white-space:nowrap}
+  .top-links a:hover{text-decoration:underline;text-underline-offset:5px}
+  .vhero-copy{
+    position:absolute;z-index:2;left:0;right:0;top:50%;transform:translateY(-50%);
+    padding:0 max(var(--gutter), calc((100% - 1320px) / 2 + var(--gutter)));
+    display:flex;justify-content:space-between;align-items:center;gap:24px;
+  }
+  .vhero-eyebrow{margin:0 0 6px;font-size:clamp(13px,1.25vw,17px);letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+  .vhero-title{
+    margin:0;font-family:var(--display);font-weight:500;text-transform:uppercase;
+    letter-spacing:.04em;line-height:1;font-size:clamp(32px,4.4vw,58px);text-wrap:balance;
+    text-shadow:0 2px 24px rgba(0,0,0,.25);
+  }
+  .vhero-btn{
+    flex:none;background:#fff;color:var(--ink);text-decoration:none;white-space:nowrap;
+    text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;padding:17px 30px;
+    transition:background .2s ease,color .2s ease;
+  }
+  .vhero-btn:hover{background:var(--ink);color:#fff}
+
   /* ---------- Hero copy ---------- */
-  .hero{text-align:center;padding:clamp(20px,4.5vw,48px) 16px 0}
+  .hero{text-align:center;padding:clamp(56px,8vw,104px) 16px 0}
   h1{
     font-family:var(--display);font-weight:600;
     font-size:clamp(42px,7.4vw,84px);line-height:.98;letter-spacing:-.035em;
@@ -364,6 +402,14 @@
     .chat span{display:none}
     .chat{padding:13px}
   }
+  @media (max-width:860px){
+    .top-links{display:none}
+  }
+  @media (max-width:720px){
+    .vhero{height:88svh;min-height:520px}
+    .vhero-copy{top:auto;bottom:clamp(32px,8vh,64px);transform:none;flex-direction:column;align-items:flex-start;gap:18px}
+    .vhero::after{background:linear-gradient(to bottom,rgba(0,0,0,.42),rgba(0,0,0,0) 24%),linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,0) 50%)}
+  }
   @media (max-width:440px){
     .announce .sep{display:none}
     .announce{flex-direction:column;align-items:center}
@@ -382,14 +428,36 @@
 </head>
 <body>
 
-<p class="announce"><span>Free shipping on orders above <b>₦500,000</b></span><span class="sep" aria-hidden="true">|</span><span>WhatsApp: <b>+234 903 434 4183</b></span></p>
-<header class="top">
-  <a class="logo" href="#top" aria-label="Debit home">
-    <img src="img/logo.png" alt="Debit">
-  </a>
-  <button class="menu" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="nav"><span></span></button>
-  <button class="bag-btn" id="bagBtn" aria-label="Open bag">Bag <span class="bag-count" id="bagCount">0</span></button>
-</header>
+<p class="announce" id="top"><span>Free shipping on orders above <b>₦500,000</b></span><span class="sep" aria-hidden="true">|</span><span>WhatsApp: <b>+234 903 434 4183</b></span></p>
+
+<!-- Video hero -->
+<section class="vhero" aria-label="New collection">
+  <video class="vhero-video" id="heroVideo" autoplay muted loop playsinline preload="auto" poster="img/hero-poster.jpg" aria-hidden="true">
+    <source src="img/hero.mp4" type="video/mp4">
+  </video>
+  <header class="top on-video">
+    <div class="top-left">
+      <button class="menu" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="nav"><span></span></button>
+      <nav class="top-links" aria-label="Primary">
+        <a href="#new">New Arrivals</a>
+        <a href="#men">Men</a>
+        <a href="#women">Women</a>
+        <a href="#collections" data-chip="all">Collections</a>
+      </nav>
+    </div>
+    <a class="logo" href="#top" aria-label="Debit home">
+      <img src="img/logo-white.png" alt="Debit">
+    </a>
+    <button class="bag-btn" id="bagBtn" aria-label="Open bag">Bag <span class="bag-count" id="bagCount">0</span></button>
+  </header>
+  <div class="vhero-copy">
+    <div>
+      <p class="vhero-eyebrow">New Collection</p>
+      <p class="vhero-title">Debit New Arrivals</p>
+    </div>
+    <a class="vhero-btn" href="#new">Shop New Arrivals</a>
+  </div>
+</section>
 
 <!-- Menu -->
 <div class="nav" id="nav" aria-hidden="true" role="dialog" aria-label="Menu">
@@ -434,7 +502,7 @@
   </div>
 </div>
 
-<main id="top">
+<main>
   <section class="hero">
     <h1>The Luxury Destination For Streetwear</h1>
     <p class="tag">Timeless streetwear with a modern Nigerian identity.</p>
@@ -782,6 +850,16 @@
   // Marquee
   const MQ = ["New Arrivals","Premium Quality","Free Shipping Over ₦500,000","Men","Women","Collections","Luxury Streetwear"];
   $("marquee").innerHTML = [...MQ, ...MQ, ...MQ, ...MQ].map(t => `<span>${t}</span>`).join("");
+
+  // ---------- Video hero: honour reduced motion, pause when off screen ----------
+  const hv = document.getElementById("heroVideo");
+  if (hv) {
+    if (reduce) { hv.removeAttribute("autoplay"); hv.pause(); }
+    else {
+      const tryPlay = () => { const p = hv.play(); if (p && p.catch) p.catch(() => {}); };
+      new IntersectionObserver(es => { es[0].isIntersecting ? tryPlay() : hv.pause(); }).observe(hv);
+    }
+  }
 
   // ---------- Hero carousel ----------
   const stage = $("stage"), track = $("track");
